@@ -12,6 +12,7 @@ HEADER_AUTHORIZATION = "Bearer {access_token}"
 URL_GET_EC2_INSTANCE = URL_API + "policies/{policy_id}/targets/instances/"
 URL_SEARCH = URL_API + "resources/?search={search}"
 URL_OPTIONS = URL_API + "policies/{id}/options/"
+access_token, refresh_token = post_obtain_token(host=host, api_key=api_key)
 
 def set_cpm_api():
   cpm_api_key= str(raw_input("Please enter your CPM API key: "))
@@ -43,8 +44,7 @@ def post_refresh_token(host, refresh_token):
   access_token = response_json['access']
   return access_token
 
-def get_all_policies(host, api_key):
-  access_token, refresh_token = post_obtain_token(host=host, api_key=api_key)
+def get_all_policies(host, access_token):
   url = URL_POLICIES.format(host=host)
   authorization = HEADER_AUTHORIZATION.format(access_token=access_token)
   headers = {'Accept': HEADER_ACCEPT, 'Authorization': authorization}
@@ -57,8 +57,7 @@ def get_all_policies(host, api_key):
       print(dict["name"])
   return all_policies
 
-def get_all_policies_id(host, api_key):
-  access_token, refresh_token = post_obtain_token(host=host, api_key=api_key)
+def get_all_policies_id(host, access_token):
   url = URL_POLICIES.format(host=host)
   authorization = HEADER_AUTHORIZATION.format(access_token=access_token)
   headers = {'Accept': HEADER_ACCEPT, 'Authorization': authorization}
@@ -72,8 +71,7 @@ def get_all_policies_id(host, api_key):
   return policies_ids
 
 
-def list_all_ec2(host, api_key):
-  access_token, refresh_token = post_obtain_token(host=host, api_key=api_key)
+def list_all_ec2(host, access_token):
   url = URL_POLICIES.format(host=host)
   authorization = HEADER_AUTHORIZATION.format(access_token=access_token)
   headers = {'Accept': HEADER_ACCEPT, 'Authorization': authorization}
@@ -89,7 +87,6 @@ def list_all_ec2(host, api_key):
              authorization = HEADER_AUTHORIZATION.format(access_token=access_token)
              headers = {'Accept': HEADER_ACCEPT, 'Authorization': authorization}
              response = requests.get(url=url, headers=headers, verify=VERIFY_SSL)
-             #assert response.status_code == 200
              response_json = response.json()
              for ec2 in response_json:
                  ec2_inst_list.append(ec2["name"])
@@ -97,16 +94,14 @@ def list_all_ec2(host, api_key):
   for instance in ec2_inst_list:
       print(instance)
 
-def search_policy(host,api_key,search):
-  access_token, refresh_token = post_obtain_token(host=host, api_key=api_key)
+def search_policy(host,access_token,search):
   url = URL_SEARCH.format(host=host,search=search)
   authorization = HEADER_AUTHORIZATION.format(access_token=access_token)
   headers = {'Accept': HEADER_ACCEPT, 'Authorization': authorization}
   response = requests.get(url=url, headers=headers, verify=VERIFY_SSL)
   print(response)
 
-def create_policy(host,api_key):
-  access_token, refresh_token = post_obtain_token(host=host, api_key=api_key)
+def create_policy(host,access_token):
   account_id=str(raw_input("Please enter your account id: "))
   policy_name=str(raw_input("Please enter policy_name: "))
   policy_description=str(raw_input("Please enter policy_description: "))
@@ -128,9 +123,8 @@ def create_policy(host,api_key):
 def set_backup_script_option(host,api_key):
     pass
 
-def set_timeout_option(host,api_key):
+def set_timeout_option(host,access_token):
     timeout=int(raw_input("Input the minimum timeout value to set all policies too : \n"))
-    access_token, refresh_token = post_obtain_token(host=host, api_key=api_key)
     policy_id_list=get_all_policies_id(host, api_key)
     for id in policy_id_list:
         url = URL_OPTIONS.format(host=host,id=id)
