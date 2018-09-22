@@ -1,7 +1,6 @@
 import sys
 import requests
 
-
 VERIFY_SSL = False
 URL_API = "https://{host}/api/"
 URL_TOKEN_OBTAIN = URL_API + "token/obtain/api_key/"
@@ -12,7 +11,6 @@ HEADER_AUTHORIZATION = "Bearer {access_token}"
 URL_GET_EC2_INSTANCE = URL_API + "policies/{policy_id}/targets/instances/"
 URL_SEARCH = URL_API + "resources/?search={search}"
 URL_OPTIONS = URL_API + "policies/{id}/options/"
-access_token, refresh_token = post_obtain_token(host=host, api_key=api_key)
 
 def set_cpm_api():
   cpm_api_key= str(raw_input("Please enter your CPM API key: "))
@@ -56,6 +54,7 @@ def get_all_policies(host, access_token):
   for dict in all_policies:
       print(dict["name"])
   return all_policies
+
 
 def get_all_policies_id(host, access_token):
   url = URL_POLICIES.format(host=host)
